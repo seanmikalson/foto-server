@@ -26,7 +26,7 @@ app.use(function (req, res, next) {
 
 app.post('/', function (req, res) {
     console.log('posting picture');
-    pg.connect(c.config.dbConn, function(err, client, done){
+    pg.connect(process.env.DATABASE_URL | c.config.dbConn, function(err, client, done){
         if(!err) {
             client.query('insert into pictures (data) values(\''+req.body.data+'\')', function(err, results) {
                 console.log(err);
@@ -39,7 +39,7 @@ app.post('/', function (req, res) {
 });
 
 app.get('/', function(req, res) {
-    pg.connect(c.config.dbConn, function(err, client, done){
+    pg.connect(process.env.DATABASE_URL | c.config.dbConn, function(err, client, done){
         if(!err) {
             client.query('select * from pictures', function(err, results) {
                 done();
