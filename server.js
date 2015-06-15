@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var pg = require('pg');
 var app = express();
+var c = require('./config');
 
 app.use(bodyParser.json({limit:'100000kb'}));
 app.use(function (req, res, next) {
@@ -25,7 +26,7 @@ app.use(function (req, res, next) {
 
 app.post('/', function (req, res) {
     console.log('posting picture');
-    pg.connect('postgres://ogtsopfqqoevzt:SEaLj1YCxRwaaKf8jwq5F_P_5M@ec2-23-23-199-181.compute-1.amazonaws.com:5432/d3d7klm95tukvg', function(err, client, done){
+    pg.connect(c.config.dbConn, function(err, client, done){
         if(!err) {
             client.query('insert into pictures (data) values(\''+req.body.data+'\')', function(err, results) {
                 console.log(err);
@@ -38,7 +39,7 @@ app.post('/', function (req, res) {
 });
 
 app.get('/', function(req, res) {
-    pg.connect('postgres://ogtsopfqqoevzt:SEaLj1YCxRwaaKf8jwq5F_P_5M@ec2-23-23-199-181.compute-1.amazonaws.com:5432/d3d7klm95tukvg', function(err, client, done){
+    pg.connect(c.config.dbConn, function(err, client, done){
         if(!err) {
             client.query('select * from pictures', function(err, results) {
                 done();
@@ -48,7 +49,7 @@ app.get('/', function(req, res) {
     });
 });
 
-var server = app.listen(process.env.PORT || 80, function () {
+var server = app.listen(process.env.PORT, function () {
 
     var host = server.address().address;
     var port = server.address().port;
